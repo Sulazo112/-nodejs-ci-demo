@@ -1,4 +1,4 @@
-name: CI Build and Test
+name: Node.js CI
 
 on:
   push:
@@ -6,7 +6,13 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  CUSTOM_VAR: value
+  # Define an environment variable 'CUSTOM_VAR' at the workflow level.
+
 jobs:
+  # -------------------------------
+  # Job 1: Build & Test Job
   build:
     runs-on: ubuntu-latest
 
@@ -25,10 +31,54 @@ jobs:
       run: npm install
       # Installs dependencies from package.json
 
-    - name: Build
+    - name: Run build
       run: npm run build
-      # Runs the build script (if defined in package.json)
+      # Runs the build script
 
     - name: Run tests
       run: npm test
       # Runs test script from package.json
+
+  # -------------------------------
+  # Job 2: Example Environment Variable Usage
+  example:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Use environment variable
+      run: echo "The CUSTOM_VAR is: $CUSTOM_VAR"
+      # Access "CUSTOM_VAR"
+
+  # -------------------------------
+  # Job 3: Deployment Job Using Secrets
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Use secret
+      run: echo "Access Token: ${{ secrets.ACCESS_TOKEN }}"
+      # Uses a GitHub repository secret
+
+  # -------------------------------
+  # Job 4: Conditional Job
+  conditional-job:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Runs only on push to main
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+  # -------------------------------
+  # Job 5: Passing Outputs Between Steps
+  output-example:
+    runs-on: ubuntu-latest
+
+    steps:
+    - id: step-one
+      run: echo "value=hello" >> $GITHUB_OUTPUT
+      # Sets an output called "value"
+
+    - id: step-two
+      run: echo "Received value from previous step: ${{ steps.step-one.outputs.value }}"
