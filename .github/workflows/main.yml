@@ -1,8 +1,10 @@
-name: Build Node.js App
+name: CI Build and Test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -10,19 +12,23 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
+      # Checks out your repository under $GITHUB_WORKSPACE
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
+      # Installs Node.js version 18.x
 
     - name: Install dependencies
       run: npm install
+      # Installs dependencies from package.json
 
-    - name: Start app and verify
-      run: |
-        node index.js &
-        sleep 5
-        curl -f http://localhost:3000 || exit 1
+    - name: Build
+      run: npm run build
+      # Runs the build script (if defined in package.json)
 
+    - name: Run tests
+      run: npm test
+      # Runs test script from package.json
