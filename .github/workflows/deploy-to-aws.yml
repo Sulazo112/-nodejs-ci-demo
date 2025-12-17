@@ -1,0 +1,31 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - main
+    # Triggers deployment on push to 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      # Checks out your repository
+
+    - name: Set up AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2
+      # Loads AWS credentials from GitHub secrets
+
+    - name: Deploy to AWS
+      run: |
+        # Example: Deploy using AWS CLI
+        aws s3 sync ./dist s3://your-bucket-name --delete
+        # Or deploy to EC2, Lambda, etc.
+
