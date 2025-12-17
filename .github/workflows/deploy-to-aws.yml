@@ -28,4 +28,3 @@ jobs:
         # Example: Deploy using AWS CLI
         aws s3 sync ./dist s3://your-bucket-name --delete
         # Or deploy to EC2, Lambda, etc.
-
